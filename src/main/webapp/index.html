@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Book Search</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 10px 15px;
+      border: none;
+      background-color: #007bff;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    .book-list {
+      margin-top: 20px;
+    }
+    .book-item {
+      display: flex;
+      padding: 15px;
+      border: 1px solid #ccc;
+      margin-bottom: 10px;
+      border-radius: 4px;
+      align-items: center;
+    }
+    .book-item img {
+      width: 100px;
+      height: auto;
+      margin-right: 15px;
+      border-radius: 4px;
+    }
+    .book-info {
+      max-width: 600px;
+    }
+    .book-title {
+      font-weight: bold;
+      font-size: 18px;
+    }
+    .description {
+      display: none;  /* 기본적으로 숨김 */
+      margin-top: 10px;
+      font-size: 14px;
+      color: #555;
+    }
+    .toggle-description {
+      color: #007bff;
+      cursor: pointer;
+      font-size: 14px;
+      text-decoration: underline;
+    }
+    .toggle-description:hover {
+      color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1>Book Search</h1>
+  <input type="text" id="search-query" placeholder="Enter book name or author">
+  <button onclick="searchBooks()">Search</button>
+
+  <div id="book-list" class="book-list"></div>
+</div>
+
+<script>
+  async function searchBooks() {
+    const query = document.getElementById('search-query').value;
+    if (!query) {
+      alert("Please enter a search query!");
+      return;
+    }
+
+    try {
+      const response = await fetch(`/search?query=${encodeURIComponent(query)}`);
+      const data = await response.json();
+      console.log(data);
+
+      if (data.error) {
+        alert(`Error: ${data.error}`);
+        return;
+      }
+
+      displayBooks(data);
+    } catch (error) {
+      alert("An error occurred while searching.");
+      console.error(error);
+    }
+  }
+
+  function displayBooks(books) {
+    const bookListContainer = document.getElementById('book-list');
+    bookListContainer.innerHTML = "";  // Clear previous results
+
+    if (books.length === 0) {
+      bookListContainer.innerHTML = "<p>No books found.</p>";
+      return;
+    }
+
+    books.forEach(book => {
+      const bookItem = document.createElement('div');
+      bookItem.classList.add('book-item');
+
+      const imageLink = document.createElement('a');
+      imageLink.href = book.link;  // 책 링크 설정
+      const image = document.createElement('img');
+      image.src = book.image;
+      image.alt = book.title;
+      imageLink.appendChild(image);
+
+      const bookInfo = document.createElement('div');
+      bookInfo.classList.add('book-info');
+
+      const titleLink = document.createElement('a');
+      titleLink.href = book.link;  // 책 링크 설정
+      const title = document.createElement('div');
+      title.classList.add('book-title');
+      title.innerText = book.title;
+      titleLink.appendChild(title);
+
+      const author = document.createElement('div');
+      author.innerText = `Author: ${book.author}`;
+
+      const publisher = document.createElement('div');
+      publisher.innerText = `Publisher: ${book.publisher}`;
+
+      // description 부분 추가
+      const descriptionToggle = document.createElement('div');
+      descriptionToggle.classList.add('toggle-description');
+      descriptionToggle.innerText = "Show Description";
+
+      const description = document.createElement('div');
+      description.classList.add('description');
+      description.innerText = book.description || "No description available.";
+
+      // Show/Hide description 기능
+      descriptionToggle.addEventListener('click', () => {
+        const isVisible = description.style.display === "block";
+        description.style.display = isVisible ? "none" : "block";
+        descriptionToggle.innerText = isVisible ? "Show Description" : "Hide Description";
+      });
+
+      bookInfo.appendChild(titleLink);
+      bookInfo.appendChild(author);
+      bookInfo.appendChild(publisher);
+      bookInfo.appendChild(descriptionToggle);
+      bookInfo.appendChild(description);
+
+      bookItem.appendChild(imageLink);  // 이미지 링크 추가
+      bookItem.appendChild(bookInfo);
+
+      bookListContainer.appendChild(bookItem);
+    });
+  }
+</script>
+</body>
+</html>
