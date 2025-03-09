@@ -5,84 +5,359 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Book Search</title>
   <style>
+    @font-face {
+      font-family: 'ChosunGu';
+      src: url('https://fastly.jsdelivr.net/gh/projectnoonnu/noonfonts_20-04@1.0/ChosunGu.woff') format('woff');
+      font-weight: normal;
+      font-style: normal;
+    }
+
+    * {
+      font-family: 'ChosunGu', Arial, sans-serif;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      margin: 0;
+      padding: 0;
+      background-color: #F6F0F0;
     }
+
+    /* 로고와 네비게이션 */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #F6F0F0;
+      padding: 10px 20px;
+      z-index: 10;
+    }
+
+    .logo img {
+      width: 80px;
+      height: auto;
+    }
+
+    .hamburger {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 20px;
+      width: 30px;
+      cursor: pointer;
+    }
+
+    .hamburger div {
+      width: 30px;
+      height: 4px;
+      background-color: #443627;
+      border-radius: 2px;
+    }
+
+    /* 메뉴 항목 */
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      height: 40px;
+    }
+
+    .nav a {
+      text-decoration: none;
+      color: #443627;
+      font-size: 20px;
+      margin-right: 20px;
+    }
+
+    .nav a:hover {
+      color: #BDB395;
+    }
+
+    /* 햄버거 메뉴 */
+    .menu {
+      position: fixed;
+      top: 0;
+      left: -200px;
+      width: 200px;
+      height: 100%;
+      background-color: #443627;
+      color: white;
+      transition: left 0.3s ease;
+      padding-top: 60px;
+      z-index: 5;
+    }
+
+    .menu a {
+      display: block;
+      padding: 15px;
+      text-decoration: none;
+      color: white;
+      font-size: 18px;
+    }
+
+    .menu a:hover {
+      background-color: #BDB395;
+    }
+
+    /* 헤더 */
+    header {
+      position: relative;
+      background: url('img/objects.jpg') center/cover no-repeat;
+      color: #F6F0F0;
+      padding: 40px 0;
+      text-align: center;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      flex-direction: column;
+    }
+
+    header::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    header img {
+      width: 50px;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+
+    header h1 {
+      display: inline-block;
+      font-size: 40px;
+      margin: 0;
+      z-index: 1;
+    }
+
+    /* 모바일 햄버거 메뉴 */
+    @media (max-width: 768px) {
+      .nav {
+        display: none; /* 모바일에서는 상단 네비게이션 숨김 */
+      }
+
+      .hamburger {
+        display: flex; /* 햄버거 메뉴 아이콘 표시 */
+      }
+
+      .menu {
+        position: fixed;
+        top: 0;
+        left: -200px;
+        width: 200px;
+        height: 70px;
+        background-color: #F6F0F0;
+        color: #443627;
+        transition: left 0.3s ease;
+        padding-top: 60px;
+        z-index: 5;
+      }
+
+      .menu a {
+        padding: 15px;
+        text-decoration: none;
+        color: white;
+        font-size: 18px;
+      }
+    }
+
     .container {
-      max-width: 800px;
-      margin: 0 auto;
+      max-width: 900px;
+      margin: 40px auto;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px #BDB395;
+      flex-grow: 1;
     }
+
+    h2 {
+      text-align: center;
+      font-size: 24px;
+      color: #443627;
+    }
+
     input[type="text"] {
       width: 100%;
-      padding: 10px;
-      margin-bottom: 10px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      padding: 10px 15px;
-      border: none;
-      background-color: #007bff;
-      color: white;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 2px solid #F6F0F0;
+      border-radius: 8px;
       font-size: 16px;
+      box-sizing: border-box;
+      transition: border-color 0.3s ease;
+      color: #443627;
+    }
+
+    input[type="text"]:focus {
+      border-color: #BDB395;
+      outline: none;
+      color: #443627;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background-color: #BDB395;
+      color: #F6F0F0;
+      font-size: 16px;
+      border: none;
+      border-radius: 8px;
       cursor: pointer;
-      border-radius: 4px;
+      transition: background-color 0.3s ease;
     }
+
     button:hover {
-      background-color: #0056b3;
+      background-color: #BDB395;
     }
+
     .book-list {
       margin-top: 20px;
+      min-height: 200px;
+      /*display: flex;*/
+      align-items: center;
+      /*text-align: center;*/
+      justify-content: center;
     }
+
     .book-item {
       display: flex;
       padding: 15px;
-      border: 1px solid #ccc;
-      margin-bottom: 10px;
-      border-radius: 4px;
-      align-items: center;
+      border: 1px solid #F6F0F0;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background-color: #F6F0F0;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
+
+    .book-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+
     .book-item img {
-      width: 100px;
+      width: 120px;
       height: auto;
-      margin-right: 15px;
-      border-radius: 4px;
+      margin-right: 20px;
+      border-radius: 8px;
     }
+
     .book-info {
       max-width: 600px;
     }
+
     .book-title {
       font-weight: bold;
       font-size: 18px;
+      color: #443627;
     }
+
     .description {
-      display: none;  /* 기본적으로 숨김 */
+      display: none;
       margin-top: 10px;
       font-size: 14px;
-      color: #555;
+      color: #443627;
     }
+
     .toggle-description {
-      color: #007bff;
+      color: #443627;
       cursor: pointer;
       font-size: 14px;
       text-decoration: underline;
     }
+
     .toggle-description:hover {
-      color: #0056b3;
+      color: #443627;
     }
+
+    .book-info div {
+      margin-bottom: 5px;
+      color: #443627;
+    }
+
+    .book-info a {
+      text-decoration: none;
+      color: #443627;
+    }
+
+    footer {
+      background-color: #BDB395;
+      color: #F6F0F0;
+      padding: 10px 0;
+      text-align: center;
+      bottom: 0;
+      width: 100%;
+      height: 30px;
+      position: relative;
+      overflow: hidden;
+      margin-top: auto;
+    }
+
+    footer p {
+      margin: 0;
+    }
+
   </style>
 </head>
 <body>
+
+<!-- 헤더 -->
+<div class="header">
+  <div class="hamburger" onclick="toggleMenu()">
+    <div></div>
+    <div></div>
+    <div></div>
+  </div>
+  <div class="nav">
+    <a href="#">Product</a>
+    <a href="#">News</a>
+    <a href="#">About</a>
+    <a href="#">Contact</a>
+  </div>
+</div>
+
+<!-- 메뉴 -->
+<div id="menu" class="menu">
+  <a href="#">Product</a>
+  <a href="#">News</a>
+  <a href="#">About</a>
+  <a href="#">Contact</a>
+</div>
+
+<!-- 헤더 -->
+<header>
+  <h1>책 정보 검색</h1>
+</header>
+
+<!-- 메인 콘텐츠 -->
 <div class="container">
-  <h1>Book Search</h1>
+  <h2>Search for Books</h2>
   <input type="text" id="search-query" placeholder="Enter book name or author">
   <button onclick="searchBooks()">Search</button>
 
-  <div id="book-list" class="book-list"></div>
+  <div id="book-list" class="book-list">
+    <p id="empty-message">책 목록이 표시됩니다. 검색어를 입력해 주세요!</p>
+  </div>
 </div>
 
+<!-- 푸터 -->
+<footer>
+  <p>&copy; 2025 Book Search. All rights reserved.</p>
+</footer>
+
 <script>
+  function toggleMenu() {
+    const menu = document.getElementById('menu');
+    const menuLeft = menu.style.left === '0px' ? '-200px' : '0px';
+    menu.style.left = menuLeft;
+  }
+
   async function searchBooks() {
     const query = document.getElementById('search-query').value;
     if (!query) {
@@ -121,7 +396,7 @@
       bookItem.classList.add('book-item');
 
       const imageLink = document.createElement('a');
-      imageLink.href = book.link;  // 책 링크 설정
+      imageLink.href = book.link;
       const image = document.createElement('img');
       image.src = book.image;
       image.alt = book.title;
@@ -131,7 +406,7 @@
       bookInfo.classList.add('book-info');
 
       const titleLink = document.createElement('a');
-      titleLink.href = book.link;  // 책 링크 설정
+      titleLink.href = book.link;
       const title = document.createElement('div');
       title.classList.add('book-title');
       title.innerText = book.title;
@@ -143,7 +418,6 @@
       const publisher = document.createElement('div');
       publisher.innerText = `Publisher: ${book.publisher}`;
 
-      // description 부분 추가
       const descriptionToggle = document.createElement('div');
       descriptionToggle.classList.add('toggle-description');
       descriptionToggle.innerText = "Show Description";
@@ -152,7 +426,6 @@
       description.classList.add('description');
       description.innerText = book.description || "No description available.";
 
-      // Show/Hide description 기능
       descriptionToggle.addEventListener('click', () => {
         const isVisible = description.style.display === "block";
         description.style.display = isVisible ? "none" : "block";
@@ -164,13 +437,12 @@
       bookInfo.appendChild(publisher);
       bookInfo.appendChild(descriptionToggle);
       bookInfo.appendChild(description);
-
-      bookItem.appendChild(imageLink);  // 이미지 링크 추가
+      bookItem.appendChild(imageLink);
       bookItem.appendChild(bookInfo);
-
       bookListContainer.appendChild(bookItem);
     });
   }
 </script>
+
 </body>
 </html>
